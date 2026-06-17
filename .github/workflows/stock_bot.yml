@@ -1,0 +1,32 @@
+name: GVR Stock Bot
+
+on:
+  # Chạy mỗi 5 phút trong giờ giao dịch (9:00–15:15 ICT = 2:00–8:15 UTC)
+  schedule:
+    - cron: "*/5 2-8 * * 1-5"   # Thứ 2–6, 9h–15h15 ICT
+
+  # Cho phép chạy thủ công từ tab Actions
+  workflow_dispatch:
+
+jobs:
+  send-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run bot (one shot)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+          SYMBOL:             ${{ vars.SYMBOL || 'GVR' }}
+        run: python bot.py --once
