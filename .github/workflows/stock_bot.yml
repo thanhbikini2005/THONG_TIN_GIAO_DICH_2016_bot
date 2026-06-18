@@ -1,12 +1,13 @@
 name: GVR Stock Bot
 
 on:
-  # Chạy mỗi 5 phút trong giờ giao dịch (9:00–15:15 ICT = 2:00–8:15 UTC)
   schedule:
-    - cron: "*/5 2-8 * * 1-5"   # Thứ 2–6, 9h–15h15 ICT
+    # Thứ 2–6, 9:00–15:15 ICT (UTC+7) = 02:00–08:15 UTC
+    # Chạy mỗi 5 phút
+    - cron: "0,5,10,15,20,25,30,35,40,45,50,55 2,3,4,5,6,7 * * 1-5"
+    - cron: "0,5,10 8 * * 1-5"   # 15:00–15:10 ICT
 
-  # Cho phép chạy thủ công từ tab Actions
-  workflow_dispatch:
+  workflow_dispatch:  # Chạy thủ công bất kỳ lúc nào
 
 jobs:
   send-update:
@@ -28,5 +29,5 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
-          SYMBOL:             ${{ vars.SYMBOL || 'GVR' }}
+          SYMBOL: GVR
         run: python bot.py --once
